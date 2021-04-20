@@ -27,7 +27,7 @@ class JokeList extends React.Component {
 
         if (!seenJokes.has(jokeObj.id)) {
           seenJokes.add(jokeObj.id);
-          j.push({ ...jokeObj, votes: 0 });
+          j.push({ ...jokeObj, votes: 0, locked: false });
         } else {
           console.error("duplicate found!");
         }
@@ -41,8 +41,8 @@ class JokeList extends React.Component {
   /* empty joke list and then call getJokes */
 
   generateNewJokes = async () => {
-    console.log("in generate new jokes");
-    this.setState({ ...this.state, jokes: [] }, await this.getJokes());
+    const saveList = this.state.jokes.filter((j) => j.locked);
+    this.setState({ ...this.state, jokes: saveList }, await this.getJokes());
     await this.getJokes();
   };
 
@@ -51,6 +51,15 @@ class JokeList extends React.Component {
   vote = (id, delta) => {
     let updatedList = this.state.jokes.map((j) =>
       j.id === id ? { ...j, votes: j.votes + delta } : j
+    );
+    this.setState({ ...this.state, jokes: updatedList });
+  };
+
+  /* toggle lock status for joke (locked jokes are saved on the next load) */
+
+  toggleLock = (id) => {
+    let updatedList = this.state.jokes.map((j) =>
+      j.id === id ? { ...j, locked: !j.locked } : j
     );
     this.setState({ ...this.state, jokes: updatedList });
   };
@@ -73,7 +82,9 @@ class JokeList extends React.Component {
               key={j.id}
               id={j.id}
               votes={j.votes}
+              locked={j.locked}
               vote={this.vote}
+              toggleLock={this.toggleLock}
             />
           ))}
         </div>

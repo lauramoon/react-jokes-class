@@ -19,6 +19,15 @@ class Joke extends React.Component {
 
           {this.props.votes}
         </div>
+        <div className="Joke-lock">
+          <button onClick={() => this.props.toggleLock(this.props.id)}>
+            {this.props.locked ? (
+              <i className="fas fa-lock" />
+            ) : (
+              <i className="fas fa-lock-open" style={{ color: "darkgrey" }} />
+            )}
+          </button>
+        </div>
 
         <div className="Joke-text">{this.props.text}</div>
       </div>
